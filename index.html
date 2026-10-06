@@ -66,6 +66,7 @@
     .choices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 15px; }
     .choice { min-height: 190px; display: flex; align-items: center; justify-content: center; padding: 25px 18px; position: relative; border: 1px solid var(--line); border-radius: 20px; background: #fff; color: var(--ink); font-size: clamp(1.15rem, 3.4vw, 1.65rem); font-weight: 800; line-height: 1.35; box-shadow: 0 5px 0 #ede6de; transition: transform .14s, border-color .14s, background .14s; }
     .choice:hover, .choice:focus-visible { transform: translateY(-3px); border-color: var(--accent); background: #fff9f5; outline: none; }
+    .choice:focus:not(:focus-visible) { transform: none; border-color: var(--line); background: #fff; outline: none; }
     .choice:active { transform: translateY(1px); box-shadow: 0 2px 0 #ede6de; }
     .choice em { position: absolute; top: 12px; left: 15px; font-style: normal; color: #c6beb7; font-size: .7rem; letter-spacing: .1em; }
     .compare-actions { margin-top: 18px; }
@@ -260,6 +261,8 @@
       $("undoButton").disabled = history.length === 0;
     }
     function showPair() {
+      $("leftChoice").blur();
+      $("rightChoice").blur();
       if (!currentPair) return;
       $("leftChoice").querySelector("span").textContent = currentPair[0];
       $("rightChoice").querySelector("span").textContent = currentPair[1];
@@ -283,8 +286,9 @@
     $("rightChoice").addEventListener("click", () => choose(1));
     $("undoButton").addEventListener("click", undo);
     $("shareButton").addEventListener("click", () => {
-      const rankingText = sorted.map((song, index) => `${index + 1}. ${song}`).join("\n");
-      const text = `NEXZソートの結果\n${rankingText}\n\n#NEXZソート`;
+      const topFive = sorted.slice(0, 5).map((song, index) => `${index + 1}位：${song}`).join("\n");
+      const siteUrl = window.location.href;
+      const text = `NEXZソート\n\n${topFive}\n\nあなたもNEXZソートで好きな曲をランキングしてみてね！\n${siteUrl}\n\n#NEXZ #NEXZソート`;
       window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
     });
     $("restartButton").addEventListener("click", begin);
